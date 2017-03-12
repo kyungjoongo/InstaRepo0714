@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">InstaRepo</string>
+    <string name="app_name">InstaReposter</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -9,4 +9,24 @@
     <string name="repost">Repost</string>
     <string name="share">Share</string>
     <string name="banner_ad_unit_id">ca-app-pub-6826082357124500/8800734471</string>
+
+    <string name="about">About</string>
+
+    <string name="usage">Usage</string>
+    <string name="usage_desc">
+        1. Click on the Instagram icon at the InstarReposter to launch the Instagram\n\n
+        2. Click the options button at the top right of the instagram picture -> Copy Share Click on the URL menu\n\n
+        3. InstarReposter will automatically capture your photos.\n\n
+        4. Reposting can be done by pressing the repost button at the bottom left of InstarReposter\n\n
+    </string>
+
+    <string name="about_desc">
+        Instagram Photo Repost App\n\n
+
+        InstarReposter v1.0\n\n
+
+        Created by Go Kyung Joon on March 13, 2017
+
+    </string>
+    <string name="title_activity_about">AboutActivity</string>
 </resources>

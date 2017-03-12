@@ -4,16 +4,16 @@
     <item
         android:id="@+id/repost"
         android:icon="@drawable/ic_repost_black_24dp"
-        android:title="@string/title_home" />
+        android:title="@string/repost" />
 
     <item
         android:id="@+id/download"
         android:icon="@drawable/ic_download_black_24dp"
-        android:title="@string/title_dashboard" />
+        android:title="@string/download" />
 
     <item
         android:id="@+id/share"
         android:icon="@drawable/ic_share_black_24dp"
-        android:title="@string/title_notifications" />
+        android:title="@string/share" />
 
 </menu>

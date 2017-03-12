@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"> <!-- 검색 버튼 --> <!-- Action Bar에 버튼을 추가하기 위해서는 <item> 사용 -->
+    <item
+        android:id="@+id/btn_usage"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/usage" /> <!-- 세팅 버튼 -->
+    <item
+        android:id="@+id/btn_about"
+        android:icon="@android:drawable/btn_star"
+        android:title="@string/about" />
+
+
+</menu>
+
+
+
+
+
+
+

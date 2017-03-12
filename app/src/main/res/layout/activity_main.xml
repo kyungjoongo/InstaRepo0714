@@ -11,9 +11,16 @@
 
     <ImageButton
         android:id="@+id/instaBtn"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="80dp"
-        android:icon="@drawable/ic_instargram_black_24dp" />
+        ads:srcCompat="@drawable/ic_instargram_black_24dp"/>
+
+
+    <!--<ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/android_button" />-->
 
     <ImageView
         android:id="@+id/imageview1"
@@ -28,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
+        ads:adSize="SMART_BANNER"
         ads:adUnitId="@string/banner_ad_unit_id">
     </com.google.android.gms.ads.AdView>
 

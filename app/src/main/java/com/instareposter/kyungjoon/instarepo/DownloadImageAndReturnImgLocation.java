@@ -2,7 +2,6 @@ package com.instareposter.kyungjoon.instarepo;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,45 +10,33 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.util.Log;
 import android.widget.ImageView;
 
-import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Random;
 
-import static com.instareposter.kyungjoon.instarepo.R.id.imageview1;
+class DownloadImageAndReturnImgLocation extends AsyncTask<String, Void, String> {
 
-class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
     private Context mContext;
     ProgressDialog progDialog;
-    String beSavedImageFileUri = "";
+    String imgFullPath = "";
 
     Uri imageFilePath = null;
+    String beStreamedImageFileName = "";
 
 
-    public DownloadAndBindImageViewAsyncTask(ImageView bmImage, Context mContext, String beSavedImageFileUri) {
+    public DownloadImageAndReturnImgLocation( Context mContext) {
         this.bmImage = bmImage;
         this.mContext = mContext;
-        this.beSavedImageFileUri = beSavedImageFileUri;
     }
 
     protected void onPreExecute() {
         super.onPreExecute();
-        this.progDialog = new ProgressDialog(this.mContext);
-        this.progDialog.setTitle("Please Wait..");
-        this.progDialog.show();
-        this.progDialog.getWindow().setLayout(-1, -2);
     }
 
     public String makeImageFileName(URL url) {
@@ -57,7 +44,7 @@ class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> 
         return splitedArray[splitedArray.length - 1];
     }
 
-    protected Bitmap doInBackground(String... urls) {
+    protected String doInBackground(String... urls) {
         Bitmap bitmapWaterMarkedImage = null;
         try {
 
@@ -68,14 +55,16 @@ class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> 
             //워터 마크 이미지를 만든다
             bitmapWaterMarkedImage = CommonUtils.getWatermarkImage(BitmapFactory.decodeStream(new URL(thumb_url).openStream()), author_name, mContext);
 
+            int randNum = new Random().nextInt(100000) + 1;
+            String todayDate = CommonUtils.makeTodayDate();
+            beStreamedImageFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.IMG_DOWNLOAD_DIR + todayDate + randNum + "_watermaked" + ".jpg";
 
-
-            imageFilePath = Uri.parse(this.beSavedImageFileUri);
+            imageFilePath = Uri.parse(beStreamedImageFileName);
 
 
             FileOutputStream out = null;
             try {
-                out = new FileOutputStream(this.beSavedImageFileUri);
+                out = new FileOutputStream(beStreamedImageFileName);
                 bitmapWaterMarkedImage.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
                 // PNG is a lossless format, the compression factor (100) is ignored
             } catch (Exception e) {
@@ -87,16 +76,14 @@ class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> 
             Log.d("exception", e.toString());
         }
 
-        return bitmapWaterMarkedImage;
+        return beStreamedImageFileName;
     }
 
-    protected void onPostExecute(Bitmap result) {
 
-        super.onPostExecute(result);
-        this.progDialog.dismiss();
-        this.bmImage.setImageBitmap(result);
-        this.bmImage.setTag(imageFilePath.toString());
+    protected void onPostExecute(String imagePath) {
 
+        super.onPostExecute(imagePath);
+        
     }
 
     public static Bitmap getWatermarkImage(Bitmap src, String watermark) {
@@ -117,6 +104,10 @@ class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> 
 
 
 }
+
+
+
+
 
 
 //######################
