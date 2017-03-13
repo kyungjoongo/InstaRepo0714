@@ -9,11 +9,46 @@
     android:orientation="vertical"
     tools:context="com.instareposter.kyungjoon.instarepo.MainActivity">
 
-    <ImageButton
-        android:id="@+id/instaBtn"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        ads:srcCompat="@drawable/ic_instargram_black_24dp"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <ImageButton
+            android:id="@+id/instaBtn"
+            android:layout_width="80dp"
+            android:layout_height="55dp"
+            android:adjustViewBounds="false"
+            android:background="@android:color/transparent"
+            android:cropToPadding="false"
+            android:scaleType="fitCenter"
+            ads:srcCompat="@drawable/blue_instagram"
+            />
+
+        <Space
+            android:layout_width="180dp"
+            android:layout_height="55dp" />
+
+        <CheckBox
+            android:id="@+id/checkbox1"
+            android:layout_width="133dp"
+            android:layout_height="55dp"
+            android:text="watermark"
+            android:layout_weight="0.80" />
+
+    </LinearLayout>
+
+    <TextView android:id="@+id/imageUri1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="hidden value"
+        android:visibility="gone"/>
+
+
 
 
     <!--<ImageButton

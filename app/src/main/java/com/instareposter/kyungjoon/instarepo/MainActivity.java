@@ -3,11 +3,14 @@ package com.instareposter.kyungjoon.instarepo;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,6 +31,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.orhanobut.logger.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -42,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
     ImageButton instaBtn;
     ImageView mImageView;
     ClipboardManager myClipBoard;
-    String thumbUri;
-    String dnLoadedImagePath  = "";
-    String beSavedImageUri= "";
+    String beSavedWaterMarkedImageUri = "";
+    String beSavedImageUri = "";
+    CheckBox checkbox1;
 
-
+    TextView imageTextView;
 
 
     private TextView mTextMessage;
@@ -94,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkPermission();
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -104,6 +112,14 @@ public class MainActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
         addListenerOnInstaButton();
+
+        checkbox1 = (CheckBox) findViewById(R.id.checkbox1);
+        checkbox1.setChecked(true);
+
+
+        imageTextView = (TextView) findViewById(R.id.imageUri1);
+
+        findViewById(R.id.checkbox1).setOnClickListener(this.mCheckboxListner);
 
         findViewById(R.id.repost).setOnClickListener(this.mClickListner);
         findViewById(R.id.share).setOnClickListener(this.mClickListner);
@@ -117,11 +133,16 @@ public class MainActivity extends AppCompatActivity {
         String thumbUrl = StringUtils.EMPTY;
         if (url != null) {
             try {
-                beSavedImageUri = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.IMG_DOWNLOAD_DIR + CommonUtils.makeTodayRandNo()+ "_watermaked" + ".jpg";String beStreamedImageFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.IMG_DOWNLOAD_DIR + CommonUtils.makeTodayRandNo()+ "_watermaked" + ".jpg";
 
-                DownloadAndBindImageViewAsyncTask downloadandbindimageviewasynctask = new DownloadAndBindImageViewAsyncTask(this.mImageView, MainActivity.this,beSavedImageUri);
+                beSavedWaterMarkedImageUri = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.IMG_DOWNLOAD_DIR + CommonUtils.makeTodayRandNo() + "_watermaked" + ".jpg";
+
+                beSavedImageUri = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.IMG_DOWNLOAD_DIR + CommonUtils.makeTodayRandNo() + ".jpg";
+
+                DownloadAndBindImageViewAsyncTask downloadandbindimageviewasynctask = new DownloadAndBindImageViewAsyncTask(this.mImageView, MainActivity.this, beSavedWaterMarkedImageUri, beSavedImageUri);
                 downloadandbindimageviewasynctask.execute(new String[]{this.fullUrl});
 
+
+                imageTextView.setTag(beSavedWaterMarkedImageUri);
 
 
 
@@ -134,6 +155,70 @@ public class MainActivity extends AppCompatActivity {
         //클립카피 이벤트 리스너
         this.myClipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         this.myClipBoard.addPrimaryClipChangedListener(this.mPrimaryClipChangedListener);
+    }
+
+    //체크박스 리스터
+    CheckBox.OnClickListener mCheckboxListner = new CheckBox.OnClickListener() {
+        public void onClick(View v) {
+
+
+
+
+            if (checkbox1.isChecked()) {
+                Log.d("sdfsd", "Checked");
+
+                try {
+
+                    Logger.d("beSavedWaterMarkedImageUri-->"+ beSavedWaterMarkedImageUri);
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                    Bitmap bitmap = BitmapFactory.decodeFile(beSavedWaterMarkedImageUri, options);
+                    mImageView.setImageBitmap(bitmap);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+
+
+            } else {
+
+                try {
+
+                    Logger.d("beSavedWaterMarkedImageUri-->"+ "");
+                    Logger.d("beSavedImageUri-->"+ beSavedImageUri);
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                    Bitmap bitmap = BitmapFactory.decodeFile(beSavedImageUri, options);
+                    mImageView.setImageBitmap(bitmap);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+
+                Log.d("sdfsd", "unChecked");
+
+
+            }
+        }
+    };
+
+
+    public void checkPermission() {
+
+        boolean hasPermission;
+        if (ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(), "android.permission.WRITE_EXTERNAL_STORAGE") == 0) {
+            hasPermission = true;
+        } else {
+            hasPermission = false;
+        }
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"}, MainActivity.REQUEST_WRITE_STORAGE);
+        }
+
     }
 
     /**
@@ -182,51 +267,46 @@ public class MainActivity extends AppCompatActivity {
 
     Button.OnClickListener mClickListner = new View.OnClickListener() {
         public void onClick(View v) {
-            boolean hasPermission;
-            if (ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(), "android.permission.WRITE_EXTERNAL_STORAGE") == 0) {
-                hasPermission = true;
-            } else {
-                hasPermission = false;
-            }
-            if (!hasPermission) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"}, MainActivity.REQUEST_WRITE_STORAGE);
-            }
-
-
-            DownloadImageAndReturnImgLocation downloadimageandreturnimglocation;
-            FileDownloadAsyncTask fileDownloadAsyncTask;
-            String mediaPath;
             Toast toast;
+            String targetImage = "";
+
+
+            if (checkbox1.isChecked()) {
+                targetImage = beSavedWaterMarkedImageUri;
+            }else{
+                targetImage = beSavedImageUri;
+            }
+
+
             switch (v.getId()) {
                 case R.id.repost:
                     try {
-                        Log.d("beSavedImageUri--->", beSavedImageUri);
-                        MainActivity.this.createShareIntentForInstargram("image/*", beSavedImageUri, "0");
+
+
+                        MainActivity.this.createShareIntentForInstargram("image/*", targetImage, "0");
                     } catch (Exception e22) {
                         e22.printStackTrace();
                     }
-
 
                     break;
                 case R.id.download:
 
                     try {
-                        fileDownloadAsyncTask = new FileDownloadAsyncTask(MainActivity.this.getApplicationContext());
                         downloadedImagePath = new FileDownloadAsyncTask(MainActivity.this.getApplicationContext()).execute(new String[]{MainActivity.this.fullUrl}).get();
                         toast = Toast.makeText(MainActivity.this.getApplicationContext(), "\n" +
-                                "You have successfully downloaded on  "+ downloadedImagePath, Toast.LENGTH_LONG);
+                                "You have successfully downloaded on  " + downloadedImagePath, Toast.LENGTH_LONG);
 
                         toast.show();
                     } catch (Exception e2) {
                         e2.printStackTrace();
                     }
                     break;
-                case R.id.share /*2131624115*/:
+                case R.id.share :
 
                     try {
 
-                        Log.d("beSavedImageUri--->", beSavedImageUri);
-                        MainActivity.this.createShareIntent("image/*", beSavedImageUri, "0");
+                        Logger.d("targetImage-->"+ targetImage);
+                        MainActivity.this.createShareIntent("image/*", targetImage, "0");
                         toast = Toast.makeText(MainActivity.this.getApplicationContext(), "Share this pic", Toast.LENGTH_SHORT);
                         toast.show();
                     } catch (Exception e22) {
@@ -266,7 +346,6 @@ public class MainActivity extends AppCompatActivity {
             Log.w("directory not created", "directory not created");
         }
     }
-
 
 
 }

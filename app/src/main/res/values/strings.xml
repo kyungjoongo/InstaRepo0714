@@ -29,4 +29,7 @@
 
     </string>
     <string name="title_activity_about">AboutActivity</string>
+
+    <string name="share_content1"></string>
+    <string name="share_content2"></string>
 </resources>

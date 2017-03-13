@@ -34,13 +34,15 @@ class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> 
     private Context mContext;
     ProgressDialog progDialog;
     String beSavedImageFileUri = "";
+    String beSavedWaterMarkedImageFileUri = "";
 
     Uri imageFilePath = null;
 
 
-    public DownloadAndBindImageViewAsyncTask(ImageView bmImage, Context mContext, String beSavedImageFileUri) {
+    public DownloadAndBindImageViewAsyncTask(ImageView bmImage, Context mContext, String beSavedWaterMarkedImageFileUri, String beSavedImageFileUri) {
         this.bmImage = bmImage;
         this.mContext = mContext;
+        this.beSavedWaterMarkedImageFileUri = beSavedWaterMarkedImageFileUri;
         this.beSavedImageFileUri = beSavedImageFileUri;
     }
 
@@ -67,15 +69,11 @@ class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> 
 
             //워터 마크 이미지를 만든다
             bitmapWaterMarkedImage = CommonUtils.getWatermarkImage(BitmapFactory.decodeStream(new URL(thumb_url).openStream()), author_name, mContext);
-
-
-
-            imageFilePath = Uri.parse(this.beSavedImageFileUri);
-
+            Bitmap originalImage = BitmapFactory.decodeStream(new URL(thumb_url).openStream());
 
             FileOutputStream out = null;
             try {
-                out = new FileOutputStream(this.beSavedImageFileUri);
+                out = new FileOutputStream(this.beSavedWaterMarkedImageFileUri);
                 bitmapWaterMarkedImage.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
                 // PNG is a lossless format, the compression factor (100) is ignored
             } catch (Exception e) {
@@ -83,6 +81,20 @@ class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> 
             } finally {
                 out.close();
             }
+
+            //일반이미지 스트림 아웃풋
+            out = null;
+            try {
+                out = new FileOutputStream(beSavedImageFileUri);
+                originalImage.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                // PNG is a lossless format, the compression factor (100) is ignored
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                out.close();
+            }
+
+
         } catch (Exception e) {
             Log.d("exception", e.toString());
         }
@@ -95,7 +107,6 @@ class DownloadAndBindImageViewAsyncTask extends AsyncTask<String, Void, Bitmap> 
         super.onPostExecute(result);
         this.progDialog.dismiss();
         this.bmImage.setImageBitmap(result);
-        this.bmImage.setTag(imageFilePath.toString());
 
     }
 

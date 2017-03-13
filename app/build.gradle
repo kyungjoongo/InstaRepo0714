@@ -11,8 +11,8 @@ android {
         applicationId "com.instareposter.kyungjoon.instarepo"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.4"
+        versionCode 6
+        versionName "1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -29,6 +29,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
 
     compile 'com.android.support:appcompat-v7:25.2.0'
@@ -36,5 +37,6 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:25.2.0'
     compile 'com.google.firebase:firebase-ads:10.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.orhanobut:logger:1.15'
     testCompile 'junit:junit:4.12'
 }
